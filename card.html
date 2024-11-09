@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital Business Card</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        /* Additional card-specific styles */
+        .card-container {
+            max-width: 100%;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background: #f8f9fa;
+        }
+
+        .card {
+            margin: 20px;
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .card-header {
+            padding: 30px 20px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            color: white;
+            text-align: center;
+        }
+
+        .profile-image {
+            width: 120px;
+            height: 120px;
+            border-radius: 60px;
+            border: 4px solid white;
+            margin: 0 auto 15px;
+            display: block;
+        }
+
+        .card-body {
+            padding: 20px;
+        }
+
+        .contact-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            padding: 16px;
+            background: #f8f9fa;
+            border-radius: 12px;
+            text-decoration: none;
+            color: inherit;
+            gap: 12px;
+        }
+
+        .contact-item i {
+            color: var(--primary);
+            font-size: 20px;
+            width: 24px;
+            text-align: center;
+        }
+
+        .action-buttons {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            padding: 20px;
+        }
+
+        .action-button {
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .primary-button {
+            background: var(--primary);
+            color: white;
+        }
+
+        .secondary-button {
+            background: #f8f9fa;
+            color: var(--text);
+        }
+    </style>
+</head>
+<body>
+    <div class="card-container">
+        <div class="card">
+            <div class="card-header">
+                <img src="https://placekitten.com/120/120" alt="" class="profile-image" id="profileImage">
+                <h1 id="name">Loading...</h1>
+                <p id="title"></p>
+            </div>
+            
+            <div class="card-body">
+                <div class="contact-list" id="contactList">
+                    <!-- Contact items will be inserted here -->
+                </div>
+
+                <div class="action-buttons">
+                    <button class="action-button primary-button" onclick="saveContact()">
+                        <i class="fas fa-user-plus"></i>
+                        Save Contact
+                    </button>
+                    <button class="action-button secondary-button" onclick="shareCard()">
+                        <i class="fas fa-share-alt"></i>
+                        Share
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Get card ID from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const cardId = urlParams.get('id');
+
+        // In a real implementation, you would fetch card data from a database
+        // For now, we'll use dummy data
+        const cardData = {
+            name: "Kritika Singhania",
+            title: "Lead - Growth Marketing",
+            email: "kritikasinghania@fynd.com",
+            phone: "+91 99162 99157",
+            linkedin: "https://linkedin.com/in/kritikasinghania"
+        };
+
+        // Update card with data
+        document.getElementById('name').textContent = cardData.name;
+        document.getElementById('title').textContent = cardData.title;
+
+        // Add contact items
+        const contactList = document.getElementById('contactList');
+        contactList.innerHTML = `
+            <a href="tel:${cardData.phone}" class="contact-item">
+                <i class="fas fa-phone"></i>
+                ${cardData.phone}
+            </a>
+            <a href="mailto:${cardData.email}" class="contact-item">
+                <i class="fas fa-envelope"></i>
+                ${cardData.email}
+            </a>
+            <a href="${cardData.linkedin}" class="contact-item" target="_blank">
+                <i class="fab fa-linkedin"></i>
+                LinkedIn Profile
+            </a>
+        `;
+
+        function saveContact() {
+            // Create vCard format
+            const vCard = `BEGIN:VCARD
+VERSION:3.0
+FN:${cardData.name}
+TITLE:${cardData.title}
+TEL:${cardData.phone}
+EMAIL:${cardData.email}
+URL:${cardData.linkedin}
+END:VCARD`;
+
+            // Create download
+            const blob = new Blob([vCard], { type: 'text/vcard' });
+            const url = window.URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `${cardData.name}.vcf`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        function shareCard() {
+            if (navigator.share) {
+                navigator.share({
+                    title: `${cardData.name}'s Business Card`,
+                    text: 'Check out my digital business card',
+                    url: window.location.href
+                }).catch(console.error);
+            }
+        }
+    </script>
+</body>
+</html>
