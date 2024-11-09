@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FyndMe - Card Creator</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="tool-header">
+            <div class="logo">FyndMe</div>
+            <p class="subtitle">Digital Business Card Creator</p>
+        </header>
+
+        <!-- Main Form -->
+        <main class="main-content">
+            <form id="cardForm" class="card-form">
+                <!-- Basic Info Section -->
+                <div class="form-section">
+                    <h2 class="section-title">
+                        <i class="fas fa-user"></i>
+                        Basic Information
+                    </h2>
+                    <div class="form-group">
+                        <label for="name" class="required">Full Name</label>
+                        <input type="text" id="name" name="name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="title" class="required">Job Title</label>
+                        <input type="text" id="title" name="title" required>
+                    </div>
+                </div>
+
+                <!-- Contact Section -->
+                <div class="form-section">
+                    <h2 class="section-title">
+                        <i class="fas fa-address-card"></i>
+                        Contact Details
+                    </h2>
+                    <div class="form-group">
+                        <label for="email" class="required">Work Email</label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="phone" class="required">Phone Number</label>
+                        <input type="tel" id="phone" name="phone" required>
+                    </div>
+                </div>
+
+                <!-- Social Links Section -->
+                <div class="form-section">
+                    <h2 class="section-title">
+                        <i class="fas fa-link"></i>
+                        Professional Profiles
+                    </h2>
+                    <div class="form-group">
+                        <label for="linkedin">LinkedIn Profile</label>
+                        <input type="url" id="linkedin" name="linkedin">
+                    </div>
+                    <div class="form-group">
+                        <label for="twitter">Twitter Profile</label>
+                        <input type="url" id="twitter" name="twitter">
+                    </div>
+                </div>
+
+                <!-- Photo Upload Section -->
+                <div class="form-section">
+                    <h2 class="section-title">
+                        <i class="fas fa-camera"></i>
+                        Profile Photo
+                    </h2>
+                    <div class="form-group">
+                        <label for="photo" class="required">Upload Photo</label>
+                        <input type="file" id="photo" name="photo" accept="image/*" required>
+                    </div>
+                </div>
+
+                <!-- Submit Button -->
+                <button type="button" class="create-button" onclick="generateCard()">
+                    <i class="fas fa-magic"></i>
+                    Create My Card
+                </button>
+            </form>
+
+            <!-- Preview Section -->
+            <div id="previewSection" class="preview-section" style="display: none;">
+                <h2>Your Card Preview</h2>
+                <div id="cardPreview" class="card-preview"></div>
+                <div class="share-section">
+                    <input type="text" id="cardUrl" readonly>
+                    <button onclick="copyLink()" class="copy-button">
+                        <i class="fas fa-copy"></i>
+                        Copy Link
+                    </button>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script src="js/creator.js"></script>
+</body>
+</html>
