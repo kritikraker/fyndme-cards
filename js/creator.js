@@ -1,6 +1,8 @@
-// Handle card generation
+// Get database reference
+const database = window.database;
+
 function generateCard() {
-    // Basic form validation
+    // Basic validation
     const form = document.getElementById('cardForm');
     if (!form.checkValidity()) {
         alert('Please fill in all required fields');
@@ -13,61 +15,53 @@ function generateCard() {
         title: document.getElementById('title').value,
         email: document.getElementById('email').value,
         phone: document.getElementById('phone').value,
-        linkedin: document.getElementById('linkedin').value,
-        twitter: document.getElementById('twitter').value
+        linkedin: document.getElementById('linkedin').value || '',
+        createdAt: Date.now()
     };
 
-    // Generate unique ID for the card
+    // Generate unique ID
     const cardId = Date.now().toString(36);
 
-    // Show preview section
-    const previewSection = document.getElementById('previewSection');
-    previewSection.style.display = 'block';
+    // Reference to where we want to store this card
+    const cardRef = ref(database, 'cards/' + cardId);
 
-    // Generate preview (simplified version)
-    const cardPreview = document.getElementById('cardPreview');
-    cardPreview.innerHTML = `
-        <div class="preview-card">
-            <h3>${cardData.name}</h3>
-            <p>${cardData.title}</p>
-            <p>${cardData.email}</p>
-            <p>${cardData.phone}</p>
-        </div>
-    `;
-
-    // Generate shareable link
-    const cardUrl = `${window.location.origin}/card.html?id=${cardId}`;
-    document.getElementById('cardUrl').value = cardUrl;
-
-    // Scroll to preview
-    previewSection.scrollIntoView({ behavior: 'smooth' });
+    // Save to Firebase
+    set(cardRef, cardData)
+        .then(() => {
+            // Show success message
+            alert('Card created successfully!');
+            
+            // Generate card URL
+            const cardUrl = `${window.location.origin}/fyndme-cards/card.html?id=${cardId}`;
+            
+            // Show preview section
+            document.getElementById('previewSection').style.display = 'block';
+            // Update URL in input
+            document.getElementById('cardUrl').value = cardUrl;
+            
+            // Show preview
+            const cardPreview = document.getElementById('cardPreview');
+            cardPreview.innerHTML = `
+                <div class="preview-card">
+                    <h3>${cardData.name}</h3>
+                    <p>${cardData.title}</p>
+                    <div class="contact-details">
+                        <p><i class="fas fa-envelope"></i> ${cardData.email}</p>
+                        <p><i class="fas fa-phone"></i> ${cardData.phone}</p>
+                        ${cardData.linkedin ? `<p><i class="fab fa-linkedin"></i> ${cardData.linkedin}</p>` : ''}
+                    </div>
+                </div>
+            `;
+        })
+        .catch((error) => {
+            console.error("Error saving card:", error);
+            alert('Error creating card. Please try again.');
+        });
 }
 
-// Handle link copying
 function copyLink() {
     const cardUrl = document.getElementById('cardUrl');
     cardUrl.select();
     document.execCommand('copy');
-    
-    // Show feedback
-    const copyButton = document.querySelector('.copy-button');
-    const originalText = copyButton.innerHTML;
-    copyButton.innerHTML = '<i class="fas fa-check"></i> Copied!';
-    
-    setTimeout(() => {
-        copyButton.innerHTML = originalText;
-    }, 2000);
+    alert('Link copied!');
 }
-
-// Handle file upload preview
-document.getElementById('photo').addEventListener('change', function(e) {
-    const file = e.target.files[0];
-    if (file) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            // Here you would typically handle the image preview
-            console.log('Image loaded:', e.target.result);
-        };
-        reader.readAsDataURL(file);
-    }
-});
